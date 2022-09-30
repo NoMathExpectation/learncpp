@@ -1,0 +1,6 @@
+D:/projects/learncpp/cmake-build-debug/CMakeFiles/learncpp.dir
+D:/projects/learncpp/cmake-build-debug/CMakeFiles/hellocpp.dir
+D:/projects/learncpp/cmake-build-debug/CMakeFiles/helloc.dir
+D:/projects/learncpp/cmake-build-debug/CMakeFiles/week1.dir
+D:/projects/learncpp/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/projects/learncpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
