@@ -2,7 +2,8 @@
 #include <iostream>
 using namespace std;
 
-int main() {
+int main()
+{
     const int n = 3;
     stuinfo students[n];
 
@@ -16,9 +17,12 @@ int main() {
     cout << "Input a name to find the student: ";
     cin >> name;
 
-    if (findstu(students, n, name)) {
+    if (findstu(students, n, name))
+    {
         cout << "Student found." << endl;
-    } else {
+    }
+    else
+    {
         cout << "No studnet found." << endl;
     }
 

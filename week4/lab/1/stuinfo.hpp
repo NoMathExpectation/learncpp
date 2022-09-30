@@ -5,10 +5,10 @@ struct stuinfo
     double ave;
 };
 
-void inputstu(stuinfo stu[] , int n);
+void inputstu(stuinfo stu[], int n);
 
-void showstu(stuinfo stu[] , int n);
+void showstu(stuinfo stu[], int n);
 
-void sortstu(stuinfo stu[] , int n);
+void sortstu(stuinfo stu[], int n);
 
-bool findstu(stuinfo stu[] , int n, char ch[]);
+bool findstu(stuinfo stu[], int n, char ch[]);
