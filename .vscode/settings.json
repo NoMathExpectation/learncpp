@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.rdlevel": "json",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "iostream": "cpp"
     }
 }
