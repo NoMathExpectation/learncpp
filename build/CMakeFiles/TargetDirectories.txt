@@ -1,9 +1,0 @@
-D:/projects/learncpp/build/CMakeFiles/learncpp.dir
-D:/projects/learncpp/build/CMakeFiles/hellocpp.dir
-D:/projects/learncpp/build/CMakeFiles/helloc.dir
-D:/projects/learncpp/build/CMakeFiles/week1.dir
-D:/projects/learncpp/build/CMakeFiles/project1.dir
-D:/projects/learncpp/build/CMakeFiles/lab4_1.dir
-D:/projects/learncpp/build/CMakeFiles/lab4_2.dir
-D:/projects/learncpp/build/CMakeFiles/ALL_BUILD.dir
-D:/projects/learncpp/build/CMakeFiles/ZERO_CHECK.dir
