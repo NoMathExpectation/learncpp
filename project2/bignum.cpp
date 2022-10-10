@@ -49,27 +49,29 @@ public:
         mpfr_init_set(num, from.num, get_default_rounding_mode());
     }
 
-    Bignum(unsigned long int num)
+    Bignum(const Bignum &&from) : Bignum(from) {}
+
+    Bignum(const unsigned long int num)
     {
         mpfr_init_set_ui(this->num, num, get_default_rounding_mode());
     }
 
-    Bignum(long int num)
+    Bignum(const long int num)
     {
         mpfr_init_set_si(this->num, num, get_default_rounding_mode());
     }
 
-    Bignum(float num) : Bignum()
+    Bignum(const float num) : Bignum()
     {
         mpfr_set_flt(this->num, num, get_default_rounding_mode());
     }
 
-    Bignum(double num)
+    Bignum(const double num)
     {
         mpfr_init_set_d(this->num, num, get_default_rounding_mode());
     }
 
-    Bignum(long double num)
+    Bignum(const long double num)
     {
         mpfr_init_set_ld(this->num, num, get_default_rounding_mode());
     }
@@ -87,37 +89,37 @@ public:
 
     // assignment
 
-    void operator=(Bignum &from)
+    void operator=(const Bignum &from)
     {
         mpfr_set(num, from.num, get_default_rounding_mode());
     }
 
-    void operator=(Bignum &&from)
+    void operator=(const Bignum &&from)
     {
         mpfr_set(num, from.num, get_default_rounding_mode());
     }
 
-    void operator=(unsigned long int num)
+    void operator=(const unsigned long int num)
     {
         mpfr_set_ui(this->num, num, get_default_rounding_mode());
     }
 
-    void operator=(long int num)
+    void operator=(const long int num)
     {
         mpfr_set_si(this->num, num, get_default_rounding_mode());
     }
 
-    void operator=(float num)
+    void operator=(const float num)
     {
         mpfr_set_flt(this->num, num, get_default_rounding_mode());
     }
 
-    void operator=(double num)
+    void operator=(const double num)
     {
         mpfr_set_d(this->num, num, get_default_rounding_mode());
     }
 
-    void operator=(long double num)
+    void operator=(const long double num)
     {
         mpfr_set_ld(this->num, num, get_default_rounding_mode());
     }
@@ -131,35 +133,35 @@ public:
 
     // plus
 
-    Bignum operator+(Bignum &another)
+    Bignum operator+(const Bignum &another)
     {
         Bignum result;
         mpfr_add(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator+(Bignum &&another)
+    Bignum operator+(const Bignum &&another)
     {
         Bignum result;
         mpfr_add(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator+(unsigned long int another)
+    Bignum operator+(const unsigned long int another)
     {
         Bignum result;
         mpfr_add_ui(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator+(long int another)
+    Bignum operator+(const long int another)
     {
         Bignum result;
         mpfr_add_si(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator+(double another)
+    Bignum operator+(const double another)
     {
         Bignum result;
         mpfr_add_d(result.num, num, another, get_default_rounding_mode());
@@ -168,35 +170,35 @@ public:
 
     // minus
 
-    Bignum operator-(Bignum &another)
+    Bignum operator-(const Bignum &another)
     {
         Bignum result;
         mpfr_sub(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator-(Bignum &&another)
+    Bignum operator-(const Bignum &&another)
     {
         Bignum result;
         mpfr_sub(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator-(unsigned long int another)
+    Bignum operator-(const unsigned long int another)
     {
         Bignum result;
         mpfr_sub_ui(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator-(long int another)
+    Bignum operator-(const long int another)
     {
         Bignum result;
         mpfr_sub_si(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator-(double another)
+    Bignum operator-(const double another)
     {
         Bignum result;
         mpfr_sub_d(result.num, num, another, get_default_rounding_mode());
@@ -205,35 +207,35 @@ public:
 
     // multiply
 
-    Bignum operator*(Bignum &another)
+    Bignum operator*(const Bignum &another)
     {
         Bignum result;
         mpfr_mul(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator*(Bignum &&another)
+    Bignum operator*(const Bignum &&another)
     {
         Bignum result;
         mpfr_mul(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator*(unsigned long int another)
+    Bignum operator*(const unsigned long int another)
     {
         Bignum result;
         mpfr_mul_ui(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator*(long int another)
+    Bignum operator*(const long int another)
     {
         Bignum result;
         mpfr_mul_si(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator*(double another)
+    Bignum operator*(const double another)
     {
         Bignum result;
         mpfr_mul_d(result.num, num, another, get_default_rounding_mode());
@@ -242,58 +244,57 @@ public:
 
     // divide
 
-    Bignum operator/(Bignum &another)
+    Bignum operator/(const Bignum &another)
     {
         Bignum result;
         mpfr_div(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator/(Bignum &&another)
+    Bignum operator/(const Bignum &&another)
     {
         Bignum result;
         mpfr_div(result.num, num, another.num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator/(unsigned long int another)
+    Bignum operator/(const unsigned long int another)
     {
         Bignum result;
         mpfr_div_ui(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator/(long int another)
+    Bignum operator/(const long int another)
     {
         Bignum result;
         mpfr_div_si(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-    Bignum operator/(double another)
+    Bignum operator/(const double another)
     {
         Bignum result;
         mpfr_div_d(result.num, num, another, get_default_rounding_mode());
         return result;
     }
 
-
-    //define friend ostream functions for printing
-    friend std::ostream &operator<<(std::ostream &os, Bignum &num);
-    friend std::ostream &operator<<(std::ostream &os, Bignum &&num);
+    // define friend ostream functions for printing
+    friend std::ostream &operator<<(std::ostream &os, const Bignum &num);
+    friend std::ostream &operator<<(std::ostream &os, const Bignum &&num);
 };
 
 // Define default showing precision.
 mpfr_prec_t Bignum::show_precision = 10;
 
 // ostream output.
-std::ostream &operator<<(std::ostream &os, Bignum &num)
+std::ostream &operator<<(std::ostream &os, const Bignum &num)
 {
     mpfr_printf(("%." + std::to_string(Bignum::show_precision) + "RNF").data(), num.num);
     return os;
 }
 
-std::ostream &operator<<(std::ostream &os, Bignum &&num)
+std::ostream &operator<<(std::ostream &os, const Bignum &&num)
 {
     mpfr_printf(("%." + std::to_string(Bignum::show_precision) + "RNF").data(), num.num);
     return os;
