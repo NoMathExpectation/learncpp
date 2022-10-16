@@ -10,6 +10,9 @@ protected:
     // Storing the prototype.
     mpfr_t num;
 
+    // Used to define digits count to show when printing.
+    static mpfr_prec_t show_precision;
+
 public:
     // Get or set default rounding mode, binding to mpfr.
     static mpfr_rnd_t get_default_rounding_mode()
@@ -30,65 +33,98 @@ public:
 
     static void set_default_precision(mpfr_prec_t prec)
     {
+        // mpfr internal assertion
+        if (!((prec) >= 1 && (prec) <= ((mpfr_prec_t)((((mpfr_uprec_t)-1) >> 1) - 256))))
+        {
+            throw std::invalid_argument("Illegal precision " + std::to_string(prec) + ".");
+        }
+
         mpfr_set_default_prec(prec);
     }
 
-    // Used to define precision when showing.
-    static mpfr_prec_t show_precision;
+    // Get or set show precision.
+    static mpfr_prec_t get_show_precision()
+    {
+        return show_precision;
+    }
+
+    static void set_show_precision(mpfr_prec_t digits)
+    {
+        if (digits < 0)
+        {
+            throw std::invalid_argument("Show precision must not be negative.");
+        }
+
+        show_precision = digits;
+    }
 
     // Initialize.
 
     // constant pi
-    static Bignum pi() {
+    static Bignum pi()
+    {
         Bignum pi;
         mpfr_const_pi(pi.num, get_default_rounding_mode());
         return pi;
     }
 
-    // constant pi
-    static Bignum e() {
-        Bignum e;
-        mpfr_const_euler(e.num, get_default_rounding_mode());
-        return e;
+    // constant e
+    static Bignum e()
+    {
+        return Bignum(1L).power_by_e();
+    }
+
+    // constant euler
+    static Bignum euler()
+    {
+        Bignum euler;
+        mpfr_const_euler(euler.num, get_default_rounding_mode());
+        return euler;
     }
 
     // constant catalan
-    static Bignum catalan() {
+    static Bignum catalan()
+    {
         Bignum catalan;
         mpfr_const_catalan(catalan.num, get_default_rounding_mode());
         return catalan;
     }
 
     // constant positive zero
-    static Bignum positive_zero() {
+    static Bignum positive_zero()
+    {
         Bignum zero;
         mpfr_set_zero(zero.num, 1);
         return zero;
     }
 
     // constant negative zero
-    static Bignum negative_zero() {
+    static Bignum negative_zero()
+    {
         Bignum zero;
         mpfr_set_zero(zero.num, -1);
         return zero;
     }
 
     // constant positive infinity
-    static Bignum positive_inf() {
+    static Bignum positive_inf()
+    {
         Bignum inf;
         mpfr_set_inf(inf.num, 1);
         return inf;
     }
 
     // constant negative infinity
-    static Bignum negative_inf() {
+    static Bignum negative_inf()
+    {
         Bignum inf;
         mpfr_set_inf(inf.num, -1);
         return inf;
     }
 
     // constant NaN
-    static Bignum nan() {
+    static Bignum nan()
+    {
         Bignum nan;
         mpfr_set_nan(nan.num);
         return nan;
@@ -134,7 +170,11 @@ public:
 
     Bignum(const char *ptr) : Bignum()
     {
-        mpfr_set_str(num, ptr, 0, get_default_rounding_mode());
+        int result = mpfr_set_str(num, ptr, 0, get_default_rounding_mode());
+        if (result != 0)
+        {
+            throw std::invalid_argument("Not a valid number.");
+        }
     }
 
     // unititialize.
@@ -182,18 +222,27 @@ public:
 
     void operator=(const char *ptr)
     {
-        mpfr_set_str(num, ptr, 0, get_default_rounding_mode());
+        Bignum copy(*this);
+        int result = mpfr_set_str(num, ptr, 0, get_default_rounding_mode());
+        if (result != 0)
+        {
+            *this = copy;
+            throw std::invalid_argument("Not a valid number.");
+        }
     }
 
-    long get_long() {
+    long get_long()
+    {
         return mpfr_get_si(num, get_default_rounding_mode());
     }
 
-    unsigned long get_ulong() {
+    unsigned long get_ulong()
+    {
         return mpfr_get_ui(num, get_default_rounding_mode());
     }
 
-    long double get_ldouble() {
+    long double get_ldouble()
+    {
         return mpfr_get_ld(num, get_default_rounding_mode());
     }
 
@@ -238,14 +287,14 @@ public:
 
     Bignum operator-(const Bignum &another)
     {
-        return *this - another;
+        Bignum result;
+        mpfr_sub(result.num, num, another.num, get_default_rounding_mode());
+        return result;
     }
 
     Bignum operator-(const Bignum &&another)
     {
-        Bignum result;
-        mpfr_sub(result.num, num, another.num, get_default_rounding_mode());
-        return result;
+        return *this - another;
     }
 
     Bignum operator-(const unsigned long int another)
@@ -433,19 +482,22 @@ public:
         return result;
     }
 
-    Bignum power_by_2() {
+    Bignum power_by_2()
+    {
         Bignum result;
         mpfr_exp2(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum power_by_e() {
+    Bignum power_by_e()
+    {
         Bignum result;
         mpfr_exp(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum power_by_10() {
+    Bignum power_by_10()
+    {
         Bignum result;
         mpfr_exp10(result.num, num, get_default_rounding_mode());
         return result;
@@ -454,12 +506,14 @@ public:
     // root
 
     // note: this function will transform n to unsigned long int
-    Bignum root(Bignum &n) {
+    Bignum root(Bignum &n)
+    {
         return root(n.get_ulong());
     }
 
     // note: this function will transform n to unsigned long int
-    Bignum root(Bignum &&n) {
+    Bignum root(Bignum &&n)
+    {
         return root(n);
     }
 
@@ -477,7 +531,8 @@ public:
         return result;
     }
 
-    static Bignum sqrt(unsigned long int n) {
+    static Bignum sqrt(unsigned long int n)
+    {
         Bignum result;
         mpfr_sqrt_ui(result.num, n, get_default_rounding_mode());
         return result;
@@ -491,26 +546,31 @@ public:
     }
 
     // note: this function will transform the object to unsigned long int
-    Bignum root_by(Bignum &n) {
+    Bignum root_by(Bignum &n)
+    {
         return n.root(get_ulong());
     }
 
     // note: this function will transform the object to unsigned long int
-    Bignum root_by(Bignum &&n) {
+    Bignum root_by(Bignum &&n)
+    {
         return root_by(n);
     }
 
-    Bignum root_by(const unsigned long int n) {
+    Bignum root_by(const unsigned long int n)
+    {
         return Bignum(n).root(*this);
     }
 
-    Bignum root_by(const long double n) {
+    Bignum root_by(const long double n)
+    {
         return Bignum(n).root(*this);
     }
 
     // negative value
 
-    Bignum neg() {
+    Bignum neg()
+    {
         Bignum result;
         mpfr_neg(result.num, num, get_default_rounding_mode());
         return result;
@@ -518,7 +578,8 @@ public:
 
     // absolute value
 
-    Bignum abs() {
+    Bignum abs()
+    {
         Bignum result;
         mpfr_abs(result.num, num, get_default_rounding_mode());
         return result;
@@ -526,42 +587,50 @@ public:
 
     // logarithm
 
-    Bignum log(const Bignum &base) {
+    Bignum log(const Bignum &base)
+    {
         Bignum a, b;
         mpfr_log2(a.num, num, get_default_rounding_mode());
         mpfr_log2(b.num, base.num, get_default_rounding_mode());
         return a / b;
     }
 
-    Bignum log(const Bignum &&base) {
+    Bignum log(const Bignum &&base)
+    {
         return log(base);
     }
 
-    Bignum log(const unsigned long int n) {
+    Bignum log(const unsigned long int n)
+    {
         return log(Bignum(n));
     }
 
-    Bignum log(const long int n) {
+    Bignum log(const long int n)
+    {
         return log(Bignum(n));
     }
 
-    Bignum log(const long double n) {
+    Bignum log(const long double n)
+    {
         return log(Bignum(n));
     }
 
-    Bignum log2() {
+    Bignum log2()
+    {
         Bignum result;
         mpfr_log2(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum ln() {
+    Bignum ln()
+    {
         Bignum result;
         mpfr_log(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum lg() {
+    Bignum lg()
+    {
         Bignum result;
         mpfr_log10(result.num, num, get_default_rounding_mode());
         return result;
@@ -569,109 +638,127 @@ public:
 
     // trigonometric functions
 
-    Bignum sin() {
+    Bignum sin()
+    {
         Bignum result;
         mpfr_sin(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum cos() {
+    Bignum cos()
+    {
         Bignum result;
         mpfr_cos(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum tan() {
+    Bignum tan()
+    {
         Bignum result;
         mpfr_tan(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum cot() {
+    Bignum cot()
+    {
         Bignum result;
         mpfr_cot(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum sec() {
+    Bignum sec()
+    {
         Bignum result;
         mpfr_sec(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum csc() {
+    Bignum csc()
+    {
         Bignum result;
         mpfr_csc(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum asin() {
+    Bignum asin()
+    {
         Bignum result;
         mpfr_asin(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum acos() {
+    Bignum acos()
+    {
         Bignum result;
         mpfr_acos(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum atan() {
+    Bignum atan()
+    {
         Bignum result;
         mpfr_atan(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum sinh() {
+    Bignum sinh()
+    {
         Bignum result;
         mpfr_sinh(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum cosh() {
+    Bignum cosh()
+    {
         Bignum result;
         mpfr_cosh(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum tanh() {
+    Bignum tanh()
+    {
         Bignum result;
         mpfr_tanh(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum coth() {
+    Bignum coth()
+    {
         Bignum result;
         mpfr_coth(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum sech() {
+    Bignum sech()
+    {
         Bignum result;
         mpfr_sech(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum csch() {
+    Bignum csch()
+    {
         Bignum result;
         mpfr_csch(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum asinh() {
+    Bignum asinh()
+    {
         Bignum result;
         mpfr_asinh(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum acosh() {
+    Bignum acosh()
+    {
         Bignum result;
         mpfr_acosh(result.num, num, get_default_rounding_mode());
         return result;
     }
 
-    Bignum atanh() {
+    Bignum atanh()
+    {
         Bignum result;
         mpfr_atanh(result.num, num, get_default_rounding_mode());
         return result;
