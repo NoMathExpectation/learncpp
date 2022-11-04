@@ -1,5 +1,7 @@
 main
 *.exe
+*.in
+*.out
 *.dll
 *.so
 build
